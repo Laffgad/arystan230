@@ -1,0 +1,116 @@
+function P = simParameters()
+    % Simulaiton Parameters
+    P.k = 3000;
+    P.dt = 0.05;
+    
+    % Robot Parameters
+    P.wheel_L = 0.2;
+    P.bodyW = P.wheel_L;
+    P.bodyL = 1.5 * P.wheel_L;
+    P.robotRadius = 0.5 * sqrt(P.bodyL^2 + P.bodyW^2);
+    P.safetyMargin = 0.1;
+    P.vMax = 1.0; P.vMin = -1.0;
+    P.wMax = 90 * pi / 180; P.wMin = -90 * pi / 180;
+
+    P.commR = 1.5 + P.robotRadius*4;
+    P.dTrig = 1.5;
+
+    % Initial States
+    P.nRobots = ;
+
+    P.x0s = [ 1.0,  0.0,  0.0;
+              2.0,  2.0,  0.0;
+              2.0,  -2.0,  0.0;
+              0.5,  25.5,  -pi/2;
+              0.5,  -25.5,  pi/2];
+
+    P.xgs = [19.4,  -0.5,  0.0;
+             17.5, 2.4, pi/2;
+             16.5, -2.4, -pi/2;
+             16.5, 2.4, pi/2;
+             19.25, 0.5, 0];
+
+    P.x0 = P.x0s(1,:).';
+    P.xg = P.xgs(1,:).';
+
+    % Grid Map Parameters
+    P.res = 50;
+
+    % Elastic Band parameters
+    P.EB.ds        = P.robotRadius / 2;
+    P.EB.maxIter   = 1000;
+    P.EB.step      = 0.01;
+    P.EB.kSmooth   = 30.0;
+    P.EB.kAnchor   = 0.01;
+    P.EB.kObs      = 0.01;
+    P.EB.kInside   = 8.0;
+    P.EB.influence = P.robotRadius + 0.05;
+    P.EB.maxMove   = 0.05;
+    P.EB.tol       = 1e-4;
+    
+    % Reference generation parameters
+    P.ref.stopDist       = 1.2;
+    P.ref.thetaBlendDist = 0.0;
+    P.ref.finalSpin      = true;
+
+    % Tracking / simulation termination parameters
+    P.track.fig = 2;
+    P.track.posTol = 0.05;
+    P.track.thTol  = 0.1;
+    P.track.holdCountReq = 25;
+    P.track.vTol = 0.05;
+    P.track.wTol = 3*pi/180;
+    P.track.pauseSec = 0.02;
+    P.track.headScale = 0.7;
+
+    % Lyapunov Parameters
+    P.adapt.k0    = [2.0; 15.0; 2.0];
+    P.adapt.gamma = [15.0; 15.0; 15.0];
+    P.adapt.kMin  = [0; 0; 0];
+    P.adapt.kMax  = [40; 40; 40];
+
+    % Repulsion
+    P.avoid.epsD       = 1e-3;
+    P.avoid.clearHard  = 0.03;
+    P.avoid.clearStart = 1*P.robotRadius;
+    P.avoid.ko         = 0.25;
+    P.avoid.gradMax    = 80.0;
+    
+    % Ref slowdown
+    P.refSlow.p    = 2.0;
+    P.refSlow.minW = 0.02;
+    
+    % Formation
+    P.form.w0 = 0.4;
+    P.form.dir = +1;
+    P.form.arcSpacing = 5*P.robotRadius;
+    P.form.minW = 0.02;
+    P.form.trackGain = 1.0;
+    P.form.slowP = 2.0;
+
+    % --- Formation / leader obstacle adaptation ---
+    P.form.safety   = 0.05;
+    P.form.Rmin     = 3*P.robotRadius + 0.05;
+    P.form.Rmax     = 1.50;
+    P.form.tauR     = 0.30;
+    P.form.R = P.form.Rmax;
+    
+    P.form.vLeadMax   = 0.4;
+    
+    P.form.vSlow.clearHard  = 0.05;
+    P.form.vSlow.clearStart = 2*P.robotRadius;
+    P.form.vSlow.p          = 2.0;
+    
+    % Phase coordination
+    P.phase.k      = 1.0;
+    P.phase.uMax   = 0.08;
+    P.phase.epsPhi = 0.05;
+    P.phase.wMin   = 0.02;
+
+    P.leaderRadius = P.robotRadius;
+    P.form.margin = P.form.safety;
+    P.form.vLeader = P.form.vLeadMax;
+
+    P.cost.C_base = 10.0;  % Base cost per agent
+    P.cost.alpha  = 2.0;   % Exponential scaling factor
+end
