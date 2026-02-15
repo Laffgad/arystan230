@@ -45,7 +45,7 @@ function Env = buildEnvManual()
     
     % Circles
     obs(end+1) = makeCircleObs(7, 1.5, 0.5, 80, blk, 1.0, blk, 1.0);
-    obs(end+1) = makeCircleObs(7, -1.5, 0.5, 80, blk, 1.0, blk, 1.0);
+    obs(end+1) = makeCircleObs(7, -2.5, 1, 80, blk, 1.0, blk, 1.0);
     % obs(end+1) = makeCircleObs(4, 1, 0.5, 80, blk, 1.0, blk, 1.0);
     % obs(end+1) = makeCircleObs(4, -1, 0.5, 80, blk, 1.0, blk, 1.0);
     

@@ -99,7 +99,18 @@ leaderArcState = cell(nR,1);
 formationDisabled = false;
 replanStartStep   = ones(nR, 1); % Default start index is 1
 
+fprintf('Starting Simulation...\n');
+
 for k = 1:P.k
+    % --- TIME CALCULATION ---
+    currentTime = k * P.dt;
+
+    % Display "Real Time" counter every 1.0 simulation second (assuming dt=0.05, that's 20 steps)
+    stepsPerSec = round(1/P.dt);
+    if mod(k, stepsPerSec) == 0
+        fprintf('Sim Time: %.2f sec\n', currentTime);
+    end
+    
     posAll = squeeze(Xarr(k,1:2,:));
     thAll  = squeeze(Xarr(k,3,:));
 
@@ -159,9 +170,9 @@ for k = 1:P.k
     end
     
     % --- ONLINE LOGIC: Check Cost Threshold & Replan ---
-    if costHist(k) >= 180 && ~formationDisabled
+    if costHist(k) >= 175 && ~formationDisabled
         formationDisabled = true;
-        disp(['[Step ' num2str(k) '] Cost J=' num2str(costHist(k)) ' >= 180. Formation DESTROYED. Online Replanning...']);
+        disp(['[Step ' num2str(k) ' | Time ' num2str(currentTime) 's] Cost J=' num2str(costHist(k)) ' >= 175. Formation DESTROYED. Online Replanning...']);
         
         % 1. Immediately drop leader/formation status
         haveLeader = false;
@@ -403,6 +414,9 @@ for k = 1:P.k
     end
 
     if allDone
+        % --- FINAL TIME CALCULATION ---
+        finalTime = currentTime;
+        
         Xarr  = Xarr(1:k+1,:,:);
         Uarr  = Uarr(1:k,:,:);
         Earr  = Earr(1:k,:,:);
@@ -422,6 +436,11 @@ for k = 1:P.k
         dClrLeadHist  = dClrLeadHist(1:k);
         
         costHist      = costHist(1:k);
+        
+        fprintf('\n----------------------------------------\n');
+        fprintf(' MISSION COMPLETE: All Robots Reached Goal\n');
+        fprintf(' Final Simulation Time: %.2f seconds\n', finalTime);
+        fprintf('----------------------------------------\n');
         break;
     end
 end
@@ -440,7 +459,7 @@ end
 
 figure('Color','w'); hold on; axis equal; grid on;
 drawEnv(Env);
-title('Executed trajectories'); xlabel('x'); ylabel('y');
+title(['Executed trajectories (Final Time: ' num2str(k*P.dt) ' s)']); xlabel('x'); ylabel('y');
 for i = 1:nR
     plot(Xsim{i}(:,1), Xsim{i}(:,2), '-', 'Color', cols(i,:), 'LineWidth', 2.0);
 end

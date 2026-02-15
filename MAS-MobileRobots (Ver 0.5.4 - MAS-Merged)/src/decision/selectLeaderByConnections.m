@@ -38,7 +38,8 @@ leaderIdx = NaN;
 leaderId  = NaN;
 
 mx = max(degTrig);
-if mx > 0
+% CHANGED: Check if max neighbors >= 2 (1 leader + 2 agents = 3 total)
+if mx >= 2
     best = find(degTrig == mx);
     [~, ii] = min(ids(best));
     leaderIdx = best(ii);
